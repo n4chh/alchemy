@@ -1,0 +1,9 @@
+version: '3'
+services:
+  kali:
+    build: .
+    hostname: alchemy
+    container_name: kali
+    volumes:
+      - ./data:/home/kali/ext
+    stdin_open: true
