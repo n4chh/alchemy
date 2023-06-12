@@ -1,9 +1,10 @@
 version: '3'
 services:
-  kali:
+  maldev:
     build: .
     hostname: alchemy
-    container_name: kali
+    container_name: maldev
     volumes:
-      - ./data:/home/kali/ext
-    stdin_open: true
+      - ./data:/home/ovo/ext
+    stdin_open: true 
+    tty: true 

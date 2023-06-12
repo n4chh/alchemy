@@ -8,15 +8,7 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
 fi
 
 
-function settarget() {
-  echo "$1" > $HOME/.local/target.txt
-  export TARGET="$(cat $HOME/.local/target.txt)"
-}
 
-function cleartarget() {
-  echo "$1" > $HOME/.local/target.txt
-  export TARGET="$(cat $HOME/.local/target.txt)"
-}
 
 function setws() {
   if [ -d "$1" ]; then
@@ -40,6 +32,7 @@ function showcolors() {
   done
 
 }
+
 function rot13() {
   echo "$@" | tr 'A-Za-z' 'N-ZA-Mn-za-m'
 }
@@ -48,14 +41,22 @@ function mkws() {
   mkdir -p $1/{nmap,content,exploits}
 }
 
-export TARGET="$(cat $HOME/.local/target.txt)"
+function litend() {
+  address=$1
+  for ((i = 0; i < ${#address}; i += 2)); do
+    substring="\x${address:i:2}"
+    litendaddr="${substring}${litendaddr}"
+  done
+  echo $litendaddr
+}
 export WS="$(cat $HOME/.local/workspace.txt)"
 
 
 #
 # BINARIOS PROPIOS
 export PATH="$HOME/.config/bin:$PATH"
-# FINDUTILS
+# BINARIOS DE PIP
+export PATH="/home/ovo/.local/bin:$PATH"
 # alias
 alias grep='grep --color=auto'
 alias fgrep='fgrep --color=auto'

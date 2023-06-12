@@ -1,74 +1,71 @@
-FROM kalilinux/kali-rolling:latest
+FROM alpine:latest
 #
 # UPDATING THE SYSTEM
 #
-RUN apt update -y && apt upgrade -y 
+RUN apk update
+RUN apk upgrade 
 #
 # INSTALL UTILS
 #
-RUN apt install vim -y 
-RUN apt install git -y
-RUN apt install python3 pip -y 
-RUN apt install net-tools -y 
-RUN apt install wget -y 
-RUN apt install curl -y
-RUN apt install libssl-dev -y
-RUN apt install p7zip-full -y
-RUN apt install build-essential -y
-RUN apt install sudo -y
-RUN apt install seclists -y
-#
-# INSTALL PENTESTING TOOLS
-#
-# RUN apt install enum4linux -y
-RUN apt install sqlmap -y
-RUN apt install nmap -y 
-RUN apt install ssh -y 
-RUN apt install hashcat -y 
-RUN apt install tcpdump -y
-RUN apt install john-data -y 
+RUN apk add --no-cache vim 
+RUN apk add --no-cache git
+RUN apk add --no-cache python3-dev py3-pip  
+RUN apk add --no-cache net-tools
+RUN apk add --no-cache wget 
+RUN apk add --no-cache curl
+RUN apk add --no-cache openssl-dev
+RUN apk add --no-cache 7zip
+RUN apk add --no-cache build-base
+RUN apk add --no-cache sudo
+RUN apk add --no-cache openssh 
 #
 # INSTALLING POWERLSEVEL10K AND ZSH
 #
-RUN apt install zsh -y 
+RUN apk add --no-cache zsh 
+# RUN chsh root -s /bin/zsh
 #
 # CREATING USER
 #
-RUN useradd -m -s /bin/zsh kali
-RUN usermod -aG sudo kali
-RUN echo kali:kali | chpasswd 
+RUN addgroup sudo
+RUN adduser -s /bin/zsh -D -G sudo ovo
+RUN echo 'ovo:ovo' | chpasswd
 #
 # CREATING AND COPY FILES 
 #
-RUN chsh root -s /bin/zsh
-USER kali  
-COPY --chown=kali:kali .p10k.zsh /home/kali/.p10k.zsh
+USER ovo  
+COPY --chown=ovo:ovo .p10k.zsh /home/ovo/.p10k.zsh
 RUN git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/powerlevel10k
 RUN echo 'source $HOME/powerlevel10k/powerlevel10k.zsh-theme' >>~/.zshrc
 RUN echo '[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh' >>~/.zshrc
+# USER root
+# RUN ln -s /home/ovo/.p10k.zsh $HOME/.p10k.zsh
+# RUN rm $HOME/.zshrc
+# RUN ln -s /home/ovo/.zshrc $HOME/.zshrc
+# RUN ln -s /home/ovo/powerlevel10k $HOME/powerlevel10k
+
+
+
+#
+# INSTALL EXPLOITING TOOLS
+#
 USER root
-RUN ln -s /home/kali/.p10k.zsh $HOME/.p10k.zsh
-RUN rm $HOME/.zshrc
-RUN ln -s /home/kali/.zshrc $HOME/.zshrc
-RUN ln -s /home/kali/powerlevel10k $HOME/powerlevel10k
+RUN apk add --no-cache gdb 
+RUN apk add --no-cache bash 
+RUN apk add --no-cache cmake 
+RUN apk add --no-cache libffi-dev  
+USER ovo
+WORKDIR /home/ovo
+RUN pip3 install pwntools
+RUN pip3 install --no-cache-dir \
+        pwntools 
+RUN git clone --branch dev https://github.com/hugsy/gef.git 
+RUN echo source /home/ovo/gef/gef.py >> /home/ovo/.gdbinit
 #
-# RUNNING ASTRONVIM CONFIGURATIONS
+# CREATING THE VOLUME DIRECOTRY
 #
-# RUN wget "https://github.com/neovim/neovim/releases/download/stable/nvim-linux64.deb" -O /root/nvim-linux64.deb
-# RUN apt install /root/nvim-linux64.deb -y
-# RUN git clone --depth 1 https://github.com/AstroNvim/AstroNvim /root/.config/nvim
-# RUN nvim -es
-# RUN mkdir /root/.config/nvim/lua/user
-# COPY init.lua /root/.config/nvim/lua/user/init.lua
-# RUN nvim -esc 'LspInstall clangd bash pylsp' && nvim -esc 'TSInstall cpp bash python'
-# RUN nvim -esc 'PackerSync'
-#
-# CREATING A VOLUME
-#
-USER kali
-RUN mkdir /home/kali/ext
-WORKDIR /home/kali/ext
+RUN mkdir /home/ovo/ext
+WORKDIR /home/ovo/ext
 #
 # SPAWNING SHELL
 #
-CMD /bin/zsh
+CMD /bin/bash
