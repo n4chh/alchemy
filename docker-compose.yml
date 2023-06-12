@@ -4,6 +4,8 @@ services:
     build: .
     hostname: alchemy
     container_name: maldev
+    environment:
+      TERM: xterm-256color
     volumes:
       - ./data:/home/ovo/ext
     stdin_open: true 
