@@ -27,45 +27,36 @@ RUN apk add --no-cache zsh
 # CREATING USER
 #
 RUN addgroup sudo
-RUN adduser -s /bin/zsh -D -G sudo ovo
-RUN echo 'ovo:ovo' | chpasswd
+RUN adduser -s /bin/zsh -D -G sudo alchemy
+RUN echo 'alchemy:alchemy' | chpasswd
 #
 # CREATING AND COPY FILES 
 #
-USER ovo  
-COPY --chown=ovo:ovo .p10k.zsh /home/ovo/.p10k.zsh
-RUN git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/powerlevel10k
-RUN echo 'source $HOME/powerlevel10k/powerlevel10k.zsh-theme' >>~/.zshrc
-RUN echo '[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh' >>~/.zshrc
-# USER root
-# RUN ln -s /home/ovo/.p10k.zsh $HOME/.p10k.zsh
-# RUN rm $HOME/.zshrc
-# RUN ln -s /home/ovo/.zshrc $HOME/.zshrc
-# RUN ln -s /home/ovo/powerlevel10k $HOME/powerlevel10k
-
-
-
+USER alchemy  
+COPY --chown=alchemy:alchemy .zshrc /home/alchemy/.zshrc
+COPY --chown=alchemy:alchemy .prompt.zsh /home/alchemy/.prompt.zsh
 #
 # INSTALL EXPLOITING TOOLS
 #
 USER root
+RUN ln -s /home/alchemy/.zshrc ~
+RUN ln -s /home/alchemy/.prompt.zsh ~
 RUN apk add --no-cache gdb 
 RUN apk add --no-cache bash 
 RUN apk add --no-cache cmake 
 RUN apk add --no-cache libffi-dev  
-USER ovo
-WORKDIR /home/ovo
-RUN pip3 install pwntools
-RUN pip3 install --no-cache-dir \
+USER alchemy
+WORKDIR /home/alchemy
+RUN pip3 install --no-cache-dir --break-system-package \
         pwntools 
-RUN git clone --branch dev https://github.com/hugsy/gef.git 
-RUN echo source /home/ovo/gef/gef.py >> /home/ovo/.gdbinit
+RUN git clone --depth=1 https://github.com/hugsy/gef.git 
+RUN echo source /home/alchemy/gef/gef.py >> /home/alchemy/.gdbinit
 #
 # CREATING THE VOLUME DIRECOTRY
 #
-RUN mkdir /home/ovo/ext
-WORKDIR /home/ovo/ext
+RUN mkdir /home/alchemy/ext
+WORKDIR /home/alchemy/ext
 #
 # SPAWNING SHELL
 #
-CMD /bin/bash
+ENTRYPOINT ["/bin/zsh"]

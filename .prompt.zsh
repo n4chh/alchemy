@@ -1,0 +1,16 @@
+red="%F{red}"
+blue="%F{blue}"
+green="%F{green}"
+greenlight="%F{10}"
+color1="%F{2}"
+reset="%F{reset}"
+
+prompt_symbol="${color1}󱎶%f"
+PROMPT="%(?..%B[${red}X %?$reset]%b"$'\n'")"
+PROMPT+="$reset%B[%b$prompt_symbol%B]%b "
+PROMPT+="$reset%B[%b${color1}%D{%H:%M:%S}${reset}%B]%b "
+PROMPT+="%B[%(#.$red.$blue)%n%b$reset@$color1%m$reset%B]%b "
+PROMPT+=$'\n'
+PROMPT+="%B[%b$greenlight%(3~.%-1~/…/%1~.%2~)$reset%B]:%b "
+PROMPT+="${VIRTUAL_ENV_PROMPT:+($color1%B$VIRTUAL_ENV_PROMPT%b$reset) }"
+PROMPT+="$color1%(#.#.>)$reset"
